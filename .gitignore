@@ -1,5 +1,7 @@
 # Ignore Python virtual environment
 backend/venv/
+.venv/
+venv/
 
 # Ignore Node.js dependencies
 frontend/node_modules/
