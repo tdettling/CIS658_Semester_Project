@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.inventory-container {
+  text-align: left; 
+  padding-left: 20px;
+}
+
+.editItem-container {
+  display: flex;  
+  align-items: center; 
+  gap: 10px; 
+}
