@@ -18,4 +18,4 @@ def read_root():
     
 @app.get("/inventory")
 def get_inventory():
-    return Inventory.get_inventory_data()
+    return Inventory.get_inventory()
