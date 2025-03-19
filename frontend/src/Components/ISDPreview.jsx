@@ -44,44 +44,47 @@ function ISDPreview() {
     const [previewInvoicingData, updateInvoicingData] = useState(invoicingData);
 
     return (
-        <div>
-            <div className='ordersPreview'> 
-                <h3> New ISD's </h3>
-                <div> 
-                    {previewNewData.map((item, index) => (
-                        <tr key={index}>
-                        <h4>{item.ISD}</h4>
-                        <h5>{item.Requestor}</h5>
-                    </tr>
-                ))}
-                </div>
-            </div>
+        <div className="ordersPreview">
 
-            <div className= "ordersPreview">
-            <h3> On-Order ISD's </h3>
-            <div> 
-                    {previewOnOrderData.map((item, index) => (
-                        <tr key={index}>
-                        <h4>{item.ISD}</h4>
-                        <h5>{item.Requestor}</h5>
-                    </tr>
-                ))}
+          <div className="ordersPreviewBox">
+            <h3>New ISD's</h3>
+            <div>
+              {previewNewData.map((item, index) => (
+                <div key={index} className="orderItem">
+                  <h4>{item.ISD}</h4>
+                  <h5>{item.Requestor}</h5>
                 </div>
+              ))}
             </div>
+          </div>
+      
 
-            <div className= "ordersPreview">
-            <h3> Ready for Invoicing </h3>
-            <div> 
-                    {previewInvoicingData.map((item, index) => (
-                        <tr key={index}>
-                        <h4>{item.ISD}</h4>
-                        <h5>{item.Requestor}</h5>
-                    </tr>
-                ))}
+          <div className="ordersPreviewBox">
+            <h3>On-Order ISD's</h3>
+            <div>
+              {previewOnOrderData.map((item, index) => (
+                <div key={index} className="orderItem">
+                  <h4>{item.ISD}</h4>
+                  <h5>{item.Requestor}</h5>
                 </div>
+              ))}
             </div>
+          </div>
+      
+ 
+          <div className="ordersPreviewBox">
+            <h3>Ready for Invoicing</h3>
+            <div>
+              {previewInvoicingData.map((item, index) => (
+                <div key={index} className="orderItem">
+                  <h4>{item.ISD}</h4>
+                  <h5>{item.Requestor}</h5>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-    )
+      );
     }
 
 export default ISDPreview;
