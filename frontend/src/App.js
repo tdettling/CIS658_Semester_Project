@@ -15,7 +15,7 @@ for Routing - https://www.w3schools.com/react/react_router.asp
 import './App.css';
 
 // gotta grab my compnent
-import DisplayInventory from './Components/DisplayInventory';
+//import DisplayInventory from './Components/DisplayInventory';
 import ShowInventory from './Pages/ShowInventory';
 import HomeScreen from './Pages/Homescreen';
 

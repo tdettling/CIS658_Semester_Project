@@ -1,12 +1,22 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 import inventoryData as Inventory
 
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow frontend's origin
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Adjust as needed
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Serve React app
 app.mount("/static", StaticFiles(directory="build/static"), name="static")
