@@ -60,11 +60,11 @@ NavBar css - https://www.youtube.com/watch?v=5R9jFHlG6ik
 
 .SidebarList .row:hover {
   cursor: pointer;
-  background-color: #293846;
+  background-color: #a74121;
 }
 
 .SidebarList #active {
-  background-color: #293846;
+  background-color: #a74121;
 }
 
 .row #icon {
