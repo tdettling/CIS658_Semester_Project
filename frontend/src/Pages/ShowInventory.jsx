@@ -5,6 +5,10 @@ CIS 658
 
 Tutorial for APIs - 
 http://medium.com/nerd-for-tech/fetching-api-using-useeffect-hook-in-react-js-7b9b34e427ca
+
+Tables:
+https://www.geeksforgeeks.org/how-to-create-a-table-in-reactjs/
+
 */
 
     /* IN-CLASS CODE
@@ -35,58 +39,92 @@ http://medium.com/nerd-for-tech/fetching-api-using-useeffect-hook-in-react-js-7b
 
   //tutorial --
 
-import React, { useEffect, useState, View } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from "axios"
   
   export const ShowInventory = (props) => { 
     const [inventory, setInventory] = useState([]);
 
-    useEffect(() => {
-        getInventoryData();
-    }, []);
+    const [onOrderItems, setOnOrderItems] = useState([]);
+    const [deliveredItems, setDeliveredItems] = useState([]);
 
-    const getInventoryData = () => {
+    useEffect(() => {
         axios
         .get('http://127.0.0.1:8000/inventory')
         .then((res) => {
             setInventory(res.data);
+            sortInventory(res.data);
             console.log(inventory)
         } )
         .catch((err) => console.error(err));
-    };
+      }, []);
+
+
+    function sortInventory(data) {
+      const onOrder = data.filter((item) => item.status === "On-Order");
+      const delivered = data.filter((item) => item.status === "Delivered");
+      console.log(onOrder)
+      setOnOrderItems(onOrder);
+      setDeliveredItems(delivered);
+    }
 
     return (
-        <div>
-          <h1>Wow! Here is our inventory</h1>
-          <ul>
-            {inventory.map((item) => (
-              <li key={item.stock_number}>
-                <h3>{item.product_name} (SKU: {item.sku})</h3>
-
-                <p>PO: {item.PO}</p>
-                <p>Price: ${item.price}</p>
-                <p>Quantity: {item.quantity}</p>
-                <p>Vendor: {item.vendor}</p>
-                <p>Status: {item.status}</p>
-
-                {item.serial_numbers.length > 0 && (
-                  <div>
-                    <h4>Serial Numbers:</h4>
-                    <ul>
-                      {item.serial_numbers.map((serial, index) => (
-                        <li key={index}>{serial}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-
-                )}
-              </li>
+      <div className="inventory-container">
+        <h1>Inventory Report</h1>
+  
+        <h2>On-Order Items</h2>
+        <table className="inventory-table">
+          <thead>
+            <tr>
+              <th>Stock ID</th>
+              <th>Product Name</th>
+              <th>SKU</th>
+              <th>PO</th>
+              <th>Price ($)</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {onOrderItems.map((item, index) => (
+              <tr key={index}>
+                <td>{item.stock_number}</td>
+                <td>{item.product_name}</td>
+                <td>{item.sku}</td>
+                <td>{item.PO}</td>
+                <td>${item.price}</td>
+                <td>{item.quantity}</td>
+              </tr>
             ))}
-          </ul>
-        </div>
-      );
-      
-}
+          </tbody>
+        </table>
 
-export default ShowInventory;
+        <h2>Delivered Items</h2>
+        <table className="inventory-table">
+          <thead>
+            <tr>
+              <th>Stock ID</th>
+              <th>Product Name</th>
+              <th>SKU</th>
+              <th>PO</th>
+              <th>Price ($)</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deliveredItems.map((item, index) => (
+              <tr key={index}>
+                <td>{item.stock_number}</td>
+                <td>{item.product_name}</td>
+                <td>{item.sku}</td>
+                <td>{item.PO}</td>
+                <td>${item.price}</td>
+                <td>{item.quantity}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+  
+  export default ShowInventory;

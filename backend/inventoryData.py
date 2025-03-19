@@ -69,7 +69,6 @@ inventory_data = [
 ]
 
 
-
 '''
 CRUD -- CREATE functions
 '''

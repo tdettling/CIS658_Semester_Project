@@ -16,7 +16,7 @@ export const SidebarData = [
         link: "/inventory",
     }, 
     {
-        title:"Orders",
+        title:"ISD History",
         icon: <StoreIcon />,
         link: "/orders",
     }, 
