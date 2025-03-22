@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-import os
+from sqlalchemy.orm import Session
+import database
 
 import inventoryData as Inventory
 
@@ -29,3 +30,9 @@ def read_root():
 @app.get("/inventory")
 def get_inventory():
     return Inventory.get_inventory()
+
+
+@app.get('/testOracle')
+async def get_root_with_db():
+    database.test_query()
+    return {'message': 'Query executes'}
