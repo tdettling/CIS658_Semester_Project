@@ -14,6 +14,7 @@ class Settings:
     ORACLE_DB_USERNAME = os.getenv("ORACLE_DB_USERNAME", "default_user")
     ORACLE_DB_PASSWORD = os.getenv("ORACLE_DB_PASSWORD", "default_pass")
     ORACLE_DB_DSN = os.getenv("ORACLE_DB_DSN", "default_dsn")
+    ORACLE_WALLET_PASSWORD = os.getenv("ORACLE_WALLET_PASSWORD", "default_wallet_pass")
 
 def get_settings():
     return Settings()  
