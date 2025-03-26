@@ -13,6 +13,10 @@ good tutoirals for making conneciton and getitng FastAPI working:
 https://www.youtube.com/watch?v=0N6oWoosxxE
 https://www.youtube.com/watch?v=MtrbexY7NkQ
 
+
+POST Requests StackOverflow:
+https://stackoverflow.com/questions/73759718/how-to-post-json-data-from-javascript-frontend-to-fastapi-backend
+
 '''
 
 from fastapi import FastAPI, Depends, HTTPException
@@ -67,7 +71,10 @@ def get_test_table(db: Session = Depends(database.get_db)):
     result = db.execute(text("SELECT * FROM ADMIN.TEST_TABLE")).fetchall()
     return {"data": [dict(row._mapping) for row in result]}
 
-
+@app.get("/get_inventory")
+def get_test_table(db: Session = Depends(database.get_db)):
+    result = db.execute(text("SELECT * FROM ADMIN.INVENTORY_DATA")).fetchall()
+    return {"data": [dict(row._mapping) for row in result]}
 
 
 
