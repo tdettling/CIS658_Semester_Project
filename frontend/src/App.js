@@ -20,6 +20,10 @@ import './App.css';
 import ShowInventory from './Pages/ShowInventory';
 import HomeScreen from './Pages/Homescreen';
 import Sidebar from './Components/Sidebar';
+import ItemsToOrder from './Pages/ItemsToOrder'
+import OrderFufillment from './Pages/OrderFufillment';
+import Users from './Pages/Users';
+import ITP_Settings from './Pages/ITP_Settings';
 
 
 
@@ -32,6 +36,10 @@ function App() {
           <Routes> 
             <Route path="/" element={<HomeScreen />} />
             <Route path="/inventory" element={<ShowInventory />} />
+            <Route path="/Users" element={<Users />} />
+            <Route path="/ItemsToOrder" element={<ItemsToOrder/>} />
+            <Route path="/ISDs" element={<OrderFufillment/>} />
+            <Route path="/Settings" element={<ITP_Settings/>} />
           </Routes>
         </div>
 
