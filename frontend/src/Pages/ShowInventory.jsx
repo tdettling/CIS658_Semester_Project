@@ -9,6 +9,10 @@ http://medium.com/nerd-for-tech/fetching-api-using-useeffect-hook-in-react-js-7b
 Tables:
 https://www.geeksforgeeks.org/how-to-create-a-table-in-reactjs/
 
+Making edit icons appear when a button is selected: 
+https://stackoverflow.com/questions/75354703/show-specific-item-when-button-clicked-from-list-of-items-in-react?utm_source=chatgpt.com
+
+
 */
 
     /* IN-CLASS CODE
@@ -41,12 +45,20 @@ https://www.geeksforgeeks.org/how-to-create-a-table-in-reactjs/
 
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
   
   export const ShowInventory = (props) => { 
     const [inventory, setInventory] = useState([]);
 
     const [onOrderItems, setOnOrderItems] = useState([]);
     const [deliveredItems, setDeliveredItems] = useState([]);
+
+    // Makes the items viable for editing
+    const [editItems, setEditItems] = useState([]);
+    const [editItemVisable, setEditVisable] = useState(false);
+    const [editButtonName, setEditButtonName] = useState("Edit Stock Items")
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios
@@ -68,9 +80,23 @@ import axios from "axios"
       setDeliveredItems(delivered);
     }
 
+    const handleEditButtonClick = () => {
+      if (editButtonName == "Submit"){
+        navigate("/inventory/edit")
+      }
+      setEditVisable(true); 
+      setEditButtonName("Submit")
+  };
+
+    
+
     return (
       <div className="inventory-container">
         <h1>Inventory Report</h1>
+
+        <button onClick={handleEditButtonClick} className="editStock_button">
+                {editButtonName}
+        </button>
   
         <h2>On-Order Items</h2>
         <table className="inventory-table">
@@ -87,6 +113,9 @@ import axios from "axios"
           <tbody>
             {onOrderItems.map((item, index) => (
               <tr key={index}>
+              <td>
+                  {editItemVisable && <span>✔️</span>}
+              </td>
                 <td>{item.stock_number}</td>
                 <td>{item.product_name}</td>
                 <td>{item.sku}</td>

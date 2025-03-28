@@ -24,7 +24,7 @@ import ItemsToOrder from './Pages/ItemsToOrder'
 import OrderFufillment from './Pages/OrderFufillment';
 import Users from './Pages/Users';
 import ITP_Settings from './Pages/ITP_Settings';
-
+import EditStock from './Pages/EditStock';
 
 
 function App() {
@@ -40,6 +40,7 @@ function App() {
             <Route path="/ItemsToOrder" element={<ItemsToOrder/>} />
             <Route path="/ISDs" element={<OrderFufillment/>} />
             <Route path="/Settings" element={<ITP_Settings/>} />
+            <Route path="/inventory/edit" element={<EditStock/>} />
           </Routes>
         </div>
 

@@ -29,8 +29,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 
 import database
-
 import inventoryData as Inventory
+import crud
 
 
 app = FastAPI()
@@ -73,8 +73,7 @@ def get_test_table(db: Session = Depends(database.get_db)):
 
 @app.get("/get_inventory")
 def get_test_table(db: Session = Depends(database.get_db)):
-    result = db.execute(text("SELECT * FROM ADMIN.INVENTORY_DATA")).fetchall()
-    return {"data": [dict(row._mapping) for row in result]}
+    return crud.get_test_table(db)
 
 
 
