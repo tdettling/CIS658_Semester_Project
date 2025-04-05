@@ -19,7 +19,7 @@ https://stackoverflow.com/questions/73759718/how-to-post-json-data-from-javascri
 
 '''
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -74,6 +74,46 @@ def get_test_table(db: Session = Depends(database.get_db)):
 @app.get("/get_inventory")
 def get_test_table(db: Session = Depends(database.get_db)):
     return crud.get_test_table(db)
+
+
+@app.get("/inventory/{stock_id}")
+def get_inventory_item(stock_id: int, db: Session = Depends(database.get_db)):
+    item = crud.get_inventory_item_by_stock_id(db, stock_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
+
+@app.put("/inventory/update/{stock_id}")
+def update_inventory(stock_id: int, updated_item: dict, db: Session = Depends(database.get_db)):
+    updated_item_data = crud.update_inventory_item(db, stock_id, updated_item)
+    if updated_item_data["message"] == "Item updated successfully":
+        return updated_item_data
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+
+@app.post("/inventory/add")
+def add_inventory_item(newInventoryItem: dict = Body(...), db: Session = Depends(database.get_db)):
+    return crud.create_inventory_item(db, newInventoryItem)
+
+
+@app.post("/inventory/add-fake")
+def add_fake_inventory_item(db: Session = Depends(database.get_db)):
+    fake_item = {
+        "product_name": "Test Widget",
+        "sku": "TEST-001",
+        "po": "PO-TEST",
+        "price": 9.99,
+        "quantity_ordered": 50,
+        "quantity_arrived": 25,
+        "quantity_available": 25,
+        "vendor": "TestVendor Inc.",
+        "status": "On-Order",
+        "serial_numbers": "SN123456789",
+        "category": "Testing"
+    }
+    return crud.create_inventory_item(db, fake_item)
 
 
 

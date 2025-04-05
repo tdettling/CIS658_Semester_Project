@@ -124,3 +124,10 @@ NavBar css - https://www.youtube.com/watch?v=5R9jFHlG6ik
   border: 1px solid #ddd;
   border-radius: 5px;
 }
+
+.editStockIcon {
+  font-size: 1.8rem;  
+  cursor: pointer;  
+  margin-right: 7px;
+}
+
