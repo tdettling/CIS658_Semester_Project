@@ -93,6 +93,14 @@ def update_inventory(stock_id: int, updated_item: dict, db: Session = Depends(da
 
 
 
+@app.delete("/inventory/delete/{stock_id}")
+def delete_inventory(stock_id: int, db: Session = Depends(database.get_db)):
+    result = crud.delete_stock_item(db, stock_id)
+    if result["detail"] == "Item not found":
+        raise HTTPException(status_code=404, detail="Item not found")
+    return result
+
+
 @app.post("/inventory/add")
 def add_inventory_item(newInventoryItem: dict = Body(...), db: Session = Depends(database.get_db)):
     return crud.create_inventory_item(db, newInventoryItem)

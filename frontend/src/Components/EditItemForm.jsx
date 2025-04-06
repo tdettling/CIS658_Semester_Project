@@ -1,7 +1,7 @@
 import React from 'react';
 
 const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
-  
+  console.log(formData)
   return (
     <div className="form-container">
 

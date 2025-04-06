@@ -22,7 +22,7 @@ const EditStock = () => {
     category: '',
   });
 
-  // Fetch the current item data when the component mounts
+  // grab the current item data when the component mounts
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -32,8 +32,8 @@ const EditStock = () => {
           },
         });
 
-        console.log('Grabbing current item:', res.data.data);
-        setFormData(res.data.data); 
+        console.log('Grabbing current item:', res.data);
+        setFormData(res.data); 
       } catch (err) {
         console.error('Error fetching current item:', err);
       }
@@ -53,11 +53,24 @@ const EditStock = () => {
         },
       });
 
-      console.log('Edit successful:', res.data.data);
+      console.log('Edit successful:', res.data);
       navigate('/inventory'); 
     } catch (err) {
       console.error('Error editing item:', err);
     }
+  };
+
+  // onChange for edit compnment
+  // parent owns formdata, we keep on change
+    // Handle form field changes
+      // https://stackoverflow.com/questions/64210380/get-value-from-e-target-name-and-use-in-react-hooks-setstate
+    // https://www.reddit.com/r/reactjs/comments/rwqufw/what_is_the_difference_between_these_prevstate/?rdt=53661
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -67,7 +80,7 @@ const EditStock = () => {
       <p>Editing Item with ID: {stock_id}</p>
 
       <div className="form-container">
-        <EditItemForm formData={formData} handleSubmit={handleSubmit} setFormData={setFormData} title="Edit a Stock Item" />
+        <EditItemForm formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} setFormData={setFormData} title="Edit a Stock Item" />
       </div>
     </div>
   );

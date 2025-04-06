@@ -40,15 +40,24 @@ static addColor(color) {
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+//icons
+// https://react-icons.github.io/react-icons/
 import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
+import DeletePopup from '../Components/DeletePopup';
 
 export const ShowInventory = (props) => { 
   const [inventory, setInventory] = useState([]);
   const [onOrderItems, setOnOrderItems] = useState([]); 
   const [partialItems, setPartialItems] = useState([]);
   const [deliveredItems, setDeliveredItems] = useState([]);
+
+  //deleting an item, double check via popup
+  const [deletePopup, setPopup] = useState(false);
+  const [deletePopupItem, setDeletePopupItem] = useState(null);
+
   
-  // flag to trigger refetch after adding or editing stock item
+  // flag to trigger refresh after adding/editing stock item
   const [fetchInventory, setFetchInventory] = useState(true);
   
   const navigate = useNavigate();
@@ -58,7 +67,6 @@ export const ShowInventory = (props) => {
       axios
         .get('http://127.0.0.1:8000/get_inventory')
         .then((res) => {
-          console.log('Received raw inventory data:', res.data.data);
           setInventory(res.data.data);
           sortInventory(res.data.data);
         })
@@ -69,24 +77,44 @@ export const ShowInventory = (props) => {
   }, [fetchInventory]);
 
   function sortInventory(data) {
-    console.log('Received inventory data:', data);  // Check the data here
+
     const onOrder = data.filter((item) => item.status === "On-Order");
     const partiallyReceived = data.filter((item) => item.status === "Partially Received");
     const delivered = data.filter((item) => item.status === "Delivered");
-    console.log('Delivered Items:', delivered);  // Check the delivered items here
+
     setOnOrderItems(onOrder);
     setPartialItems(partiallyReceived);
     setDeliveredItems(delivered);
   }
 
   const handleEditButtonClick = (stockNumber) => {
-    // Navigate to the edit page with the stock number
+    // grab the stock info
     navigate(`/inventory/edit/${stockNumber}`);
   };
 
   const handleNewButtonClick = () => {
     navigate("/inventory/new");
   };
+
+  const handleDeleteButtonClick = async (e, stock_id) => {
+    e.preventDefault();
+  
+    try {
+      const res = await axios.delete(`http://127.0.0.1:8000/inventory/delete/${stock_id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log('Delete successful:', res.data);
+      // triggers refresh, usestate will only update when a compnent is refreshed. 
+      navigate('/inventory'); 
+    } catch (err) {
+      console.error('Error deleting item:', err);
+    }
+  };
+  
+
 
   return (
     <div className="inventory-container">
@@ -96,44 +124,80 @@ export const ShowInventory = (props) => {
         New Stock Item
       </button>
 
+
       <h2>On-Order Items</h2>
+
       <table className="inventory-table">
         <thead>
-          <tr>
-            <th> </th>
-            <th>PO</th>
-            <th>Product Name</th>
-            <th>SKU</th>
-            <th>Price ($)</th>
-            <th>Quantity</th>
-          </tr>
-        </thead>
-        <tbody>
-          {onOrderItems.map((item, index) => (
-            <tr key={index}>
-              <td>
-                <button
-                  onClick={() => handleEditButtonClick(item.stock_id)} 
-                  className="editStock_button"
-                >
-                  <MdEdit className="editStockIcon"/>
-                </button>
-              </td>
-              <td>{item.po}</td>
-              <td>{item.product_name}</td>
-              <td>{item.sku}</td>
-              <td>${item.price}</td>
-              <td>{item.quantity_ordered}</td>
-            </tr>
+                <tr>
+                  <th> Actions </th>
+                  <th>PO</th>
+                  <th>Product Name</th>
+                  <th>SKU</th>
+                  <th>Price ($)</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {onOrderItems.map((item, index) => (
+                  <tr key={index}>
+        <td>
+          <button
+            onClick={() => handleEditButtonClick(item.stock_id)}
+            className="editStock_button"
+          >
+            <MdEdit className="editStockIcon"/>
+          </button>
+
+          <button
+            onClick={() => {
+              setPopup(true);
+              setDeletePopupItem(item);
+            }}
+            className="editStock_button"
+          >
+            <MdDelete className="editStockIcon"/>
+          </button>
+        </td>
+        <td>{item.po}</td>
+        <td>{item.product_name}</td>
+        <td>{item.sku}</td>
+        <td>${item.price}</td>
+        <td>{item.quantity_ordered}</td>
+      </tr>
+
           ))}
         </tbody>
       </table>
+
+        {deletePopupItem && (
+        <DeletePopup
+          trigger={deletePopup}
+          setTrigger={(val) => {
+            setPopup(val);
+            if (!val) setDeletePopupItem(null);
+          }}
+          onConfirm={(e) => {
+            handleDeleteButtonClick(e, deletePopupItem?.stock_id);
+            setPopup(false);
+            setDeletePopupItem(null);
+            setFetchInventory(true);
+          }}
+          >
+
+
+          <h2>Are you sure you want to delete this stock item?</h2>
+          <p>Product Name: {deletePopupItem.product_name}</p>
+          <p>PO Number: {deletePopupItem.po}</p>
+        </DeletePopup>
+      )}
+
 
       <h2>Partially Received Items</h2>
       <table className="inventory-table">
         <thead>
           <tr>
-            <th> </th>
+            <th> Actions </th>
             <th>PO</th>
             <th>Product Name</th>
             <th>SKU</th>
@@ -146,11 +210,23 @@ export const ShowInventory = (props) => {
             <tr key={index}>
               <td>
                 <button
-                  onClick={() => handleEditButtonClick(item.sku)} // Passing the SKU as stock number
+                  onClick={() => handleEditButtonClick(item.stock_id)} 
                   className="editStock_button"
                 >
                   <MdEdit className="editStockIcon"/>
                 </button>
+
+                <button
+                  onClick={() => {
+                    setPopup(true);
+                    setDeletePopupItem(item);
+                  }}
+                  className="editStock_button"
+                >
+                  <MdDelete className="editStockIcon"/>
+                </button>
+
+
               </td>
               <td>{item.po}</td>
               <td>{item.product_name}</td>
@@ -160,13 +236,35 @@ export const ShowInventory = (props) => {
             </tr>
           ))}
         </tbody>
-      </table>
+            </table>
+
+        {deletePopupItem && (
+        <DeletePopup
+          trigger={deletePopup}
+          setTrigger={(val) => {
+            setPopup(val);
+            if (!val) setDeletePopupItem(null);
+          }}
+          onConfirm={(e) => {
+            handleDeleteButtonClick(e, deletePopupItem?.stock_id);
+            setPopup(false);
+            setDeletePopupItem(null);
+            setFetchInventory(true);
+          }}
+          >
+
+          
+          <h2>Are you sure you want to delete this stock item?</h2>
+          <p>Product Name: {deletePopupItem.product_name}</p>
+          <p>PO Number: {deletePopupItem.po}</p>
+        </DeletePopup>
+      )}
 
       <h2>Delivered Items</h2>
       <table className="inventory-table">
         <thead>
           <tr>
-            <th> </th>
+            <th> Actions </th>
             <th>PO</th>
             <th>Product Name</th>
             <th>SKU</th>
@@ -179,10 +277,20 @@ export const ShowInventory = (props) => {
             <tr key={index}>
               <td>
                 <button
-                  onClick={() => handleEditButtonClick(item.stock_id)} // Passing the SKU as stock number
+                  onClick={() => handleEditButtonClick(item.stock_id)} 
                   className="editStock_button"
                 >
                   <MdEdit className="editStockIcon"/>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setPopup(true);
+                    setDeletePopupItem(item);
+                  }}
+                  className="editStock_button"
+                >
+                  <MdDelete className="editStockIcon"/>
                 </button>
               </td>
               <td>{item.po}</td>
@@ -193,7 +301,29 @@ export const ShowInventory = (props) => {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+
+        {deletePopupItem && (
+        <DeletePopup
+          trigger={deletePopup}
+          setTrigger={(val) => {
+            setPopup(val);
+            if (!val) setDeletePopupItem(null);
+          }}
+          onConfirm={(e) => {
+            handleDeleteButtonClick(e, deletePopupItem?.stock_id);
+            setPopup(false);
+            setDeletePopupItem(null);
+            setFetchInventory(true);
+          }}
+          >
+
+          
+          <h2>Are you sure you want to delete this stock item?</h2>
+          <p>Product Name: {deletePopupItem.product_name}</p>
+          <p>PO Number: {deletePopupItem.po}</p>
+        </DeletePopup>
+        )}
     </div>
   );
 };

@@ -2,17 +2,21 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 
-def get_test_table(db: Session):
-    result = db.execute(text("SELECT * FROM ADMIN.INVENTORY_DATA")).fetchall()
-    return {"data": [dict(row._mapping) for row in result]}
+
+
+'''
+*******************************************************************************************************
+CREATE
+*******************************************************************************************************
+'''
 
 def create_inventory_item(db: Session, new_item: dict):
-    # Step 1: Get the current highest stock_id
+    # get the current highest stock_id
     result = db.execute(text("SELECT MAX(stock_id) FROM ADMIN.INVENTORY_DATA")).fetchone()
     highest_stock_id = result[0] or 0
     new_stock_id = highest_stock_id + 1
 
-    # Step 2: Insert the new item
+    
     insert_query = text("""
         INSERT INTO ADMIN.INVENTORY_DATA (
             stock_id, product_name, sku, po, price,
@@ -43,6 +47,18 @@ def create_inventory_item(db: Session, new_item: dict):
     db.commit()
     return {"message": "Item added successfully", "stock_id": new_stock_id}
 
+'''
+*******************************************************************************************************
+READ
+*******************************************************************************************************
+'''
+
+def get_test_table(db: Session):
+    result = db.execute(text("SELECT * FROM ADMIN.INVENTORY_DATA")).fetchall()
+    return {"data": [dict(row._mapping) for row in result]}
+
+
+
 
 
 def get_inventory_item_by_stock_id(db: Session, stock_id: int):
@@ -54,6 +70,14 @@ def get_inventory_item_by_stock_id(db: Session, stock_id: int):
     if result:
         return dict(result._mapping)
     return None
+
+
+
+'''
+*******************************************************************************************************
+UPDATE
+*******************************************************************************************************
+'''
 
 def update_inventory_item(db: Session, stock_id: int, updated_item: dict):
     update_query = text("""
@@ -91,3 +115,29 @@ def update_inventory_item(db: Session, stock_id: int, updated_item: dict):
     db.commit() 
 
     return {"message": "Item updated successfully", "stock_id": stock_id}
+
+
+'''
+*******************************************************************************************************
+DELETE/DESTROY
+*******************************************************************************************************
+'''
+
+
+# deleting a stock item
+def delete_stock_item(db: Session, stock_id: int):
+    # check existence first just inn case
+    result = db.execute(
+        text("SELECT * FROM ADMIN.INVENTORY_DATA WHERE STOCK_ID = :stock_id"),
+        {"stock_id": stock_id}
+    ).fetchone()
+    
+    if result:
+        db.execute(
+            text("DELETE FROM ADMIN.INVENTORY_DATA WHERE STOCK_ID = :stock_id"),
+            {"stock_id": stock_id}
+        )
+        db.commit()
+        return {"detail": "Item deleted"}
+    
+    return {"detail": "Item not found"}
