@@ -32,6 +32,7 @@ const CreateStockItem = () => {
 
       console.log(res.data);
       setMessage('Item added successfully!');
+      navigate('/inventory'); 
     } catch (error) {
       console.error(error);
       setMessage('Error adding item');
@@ -48,6 +49,7 @@ const CreateStockItem = () => {
       ...prevData,
       [name]: value,
     }));
+    
   };
 
   // Back button click 

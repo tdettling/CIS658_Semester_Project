@@ -44,6 +44,7 @@ import { useNavigate } from "react-router-dom";
 // https://react-icons.github.io/react-icons/
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import { FaPlusSquare } from "react-icons/fa";
 import DeletePopup from '../Components/DeletePopup';
 
 export const ShowInventory = (props) => { 
@@ -114,14 +115,25 @@ export const ShowInventory = (props) => {
     }
   };
   
-
+  // handle PO search
 
   return (
     <div className="inventory-container">
       <h1>Inventory Report</h1>
+      <div>
+      <form autocomplete="on" action="/">
+                <div class="autocomplete" >
+                    <input id="PO_Search" type="text" name="po_search" placeholder="PO # "/>
+                </div>
+
+                <input type="submit"/>
+
+            </form>
+      </div>
 
       <button onClick={handleNewButtonClick} className="newStock_button">
-        New Stock Item
+      
+       <FaPlusSquare className='addStockIcon' />
       </button>
 
 

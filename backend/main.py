@@ -92,6 +92,21 @@ def update_inventory(stock_id: int, updated_item: dict, db: Session = Depends(da
     raise HTTPException(status_code=404, detail="Item not found")
 
 
+@app.put("/ISDs/fulfillment/submit/{isd_number}")
+def update_inventory(isd_number: int, item_rows: dict, db: Session = Depends(database.get_db)):
+    # remove pervious
+    delete_result = crud.delete_fulfillment_line_items(db, isd_number)
+    if delete_result["detail"] == "Items deleted":
+
+        
+        updated_item_data = crud.update_inventory_item(db, stock_id, updated_item)
+        if updated_item_data["message"] == "Item updated successfully":
+            return updated_item_data
+        raise HTTPException(status_code=404, detail="Item not found")
+    else:
+        raise HTTPException(status_code=404, detail="Item's could not be deleted for replacement")
+
+
 
 @app.delete("/inventory/delete/{stock_id}")
 def delete_inventory(stock_id: int, db: Session = Depends(database.get_db)):
@@ -129,3 +144,64 @@ def add_fake_inventory_item(db: Session = Depends(database.get_db)):
 def db_check(db: Session = Depends(database.get_db)):
     result = db.execute(text("SELECT sysdate FROM dual")).fetchone()
     return {"sysdate": str(result[0])}
+
+
+@app.get("/ISDs/{isd_number}")
+def get_single_ISD(isd_number: int, db: Session = Depends(database.get_db)):
+    item = crud.get_single_ISD(db, isd_number)
+    if item is None:
+        raise HTTPException(status_code=404, detail="ISD not found")
+    return item
+
+
+@app.get("/ISDs/all")
+def get_all_ISDs(db: Session = Depends(database.get_db)):
+    return crud.get_all_ISDs(db)
+
+
+@app.get("/ISDs/status/{status}")
+def get_ISDs_by_status(status: str, db: Session = Depends(database.get_db)):
+    return crud.get_ISDs_by_status(db, status)
+
+
+
+@app.get("/ISDs/fufillment/{isd_number}")
+def get_fufillment_by_ISD(isd_number: int, db: Session = Depends(database.get_db)):
+    return crud.get_fufillment_by_ISD(db, isd_number)
+
+'''
+Creating ISD table
+
+
+CREATE OR REPLACE TYPE item_list_type AS TABLE OF VARCHAR2(100);
+
+
+
+CREATE TABLE Workday_ISDs (
+    isd_number       NUMBER PRIMARY KEY,
+    requestor_name   VARCHAR2(100),
+    requestor_email  VARCHAR2(100),
+    requested_items  item_list_type
+)
+NESTED TABLE requested_items STORE AS requested_items_table;
+
+
+INSERT INTO Workday_ISDs (
+    isd_number, requestor_name, requestor_email, requested_items
+) VALUES (
+    1, 'John Doe', 'john.doe@example.com',
+    item_list_type('Stapler', 'Printer Paper', 'Desk Chair')
+);
+
+
+INSERT INTO Workday_ISDs (
+    isd_number, requestor_name, requestor_email, requested_items
+) VALUES (
+    2, 'Jane Doe', 'jane.doe@example.com',
+    item_list_type('Monitor', 'Laptop Stand')
+);
+
+
+
+
+'''

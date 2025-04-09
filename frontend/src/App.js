@@ -26,6 +26,7 @@ import Users from './Pages/Users';
 import ITP_Settings from './Pages/ITP_Settings';
 import EditStock from './Pages/EditStock';
 import CreateStockItem from './Pages/CreateStockItem';
+import IsdFufill from './Pages/IsdFufill';
 
 
 function App() {
@@ -41,11 +42,11 @@ function App() {
             <Route path="/ItemsToOrder" element={<ItemsToOrder/>} />
             <Route path="/ISDs" element={<OrderFufillment/>} />
             <Route path="/Settings" element={<ITP_Settings/>} />
+            <Route path="/ISDs/:isd_number" element={<IsdFufill/>} />
             <Route path="/inventory/edit/:stock_id" element={<EditStock/>} />
             <Route path="/inventory/new" element={<CreateStockItem/>} />
           </Routes>
         </div>
-
 
         <Sidebar />
       </div>

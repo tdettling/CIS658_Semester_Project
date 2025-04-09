@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';  
 
 import OrdersPreview from '../Components/OrdersPreview';
+import SearchHomepage from '../Components/SearchHomepage';
 
 const HomeScreen = () => {
   return (
@@ -10,6 +11,9 @@ const HomeScreen = () => {
       <p>Here you can check out various inventory details.</p>
 
       <OrdersPreview />
+
+      <SearchHomepage />
+
     </div>
   );
 }
