@@ -147,7 +147,8 @@ export const ShowInventory = (props) => {
                   <th>Product Name</th>
                   <th>SKU</th>
                   <th>Price ($)</th>
-                  <th>Quantity</th>
+                  <th>Quantity Ordered</th>
+                  <th>Quantity Available</th>
                 </tr>
               </thead>
               <tbody>
@@ -176,6 +177,7 @@ export const ShowInventory = (props) => {
         <td>{item.sku}</td>
         <td>${item.price}</td>
         <td>{item.quantity_ordered}</td>
+        <td>{item.quantity_available}</td>
       </tr>
 
           ))}
@@ -215,6 +217,7 @@ export const ShowInventory = (props) => {
             <th>SKU</th>
             <th>Price ($)</th>
             <th>Quantity</th>
+            <th>Quantity Available</th>
           </tr>
         </thead>
         <tbody>
@@ -245,6 +248,7 @@ export const ShowInventory = (props) => {
               <td>{item.sku}</td>
               <td>${item.price}</td>
               <td>{item.quantity_ordered}</td>
+              <td>{item.quantity_available}</td>
             </tr>
           ))}
         </tbody>
@@ -282,6 +286,7 @@ export const ShowInventory = (props) => {
             <th>SKU</th>
             <th>Price ($)</th>
             <th>Quantity</th>
+            <th>Quantity Available</th>
           </tr>
         </thead>
         <tbody>
@@ -310,6 +315,7 @@ export const ShowInventory = (props) => {
               <td>{item.sku}</td>
               <td>${item.price}</td>
               <td>{item.quantity_ordered}</td>
+              <td>{item.quantity_available}</td>
             </tr>
           ))}
         </tbody>
