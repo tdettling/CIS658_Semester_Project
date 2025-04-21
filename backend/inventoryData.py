@@ -1,3 +1,11 @@
+'''
+L Dettling
+CIS 658
+
+Sources:
+
+'''
+
 # Data is here until I can connect to Oracle database. 
 # Fake data for now. 
 

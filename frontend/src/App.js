@@ -1,22 +1,16 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+
+*/
 
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
-
-/*
-L Dettling
-CIS 658
-React Parts 1 and 2
-
-PSA: I am slightly familer with React! It has been a while, but we do very similar things in my mobile apps class right now as well. 
-
-for Routing - https://www.w3schools.com/react/react_router.asp
-NavBar - https://www.youtube.com/watch?v=5R9jFHlG6ik
-*/
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'; 
 
 import './App.css';
 
-// gotta grab my compnent
-//import DisplayInventory from './Components/DisplayInventory';
 import ShowInventory from './Pages/ShowInventory';
 import HomeScreen from './Pages/Homescreen';
 import Sidebar from './Components/Sidebar';
@@ -27,30 +21,149 @@ import ITP_Settings from './Pages/ITP_Settings';
 import EditStock from './Pages/EditStock';
 import CreateStockItem from './Pages/CreateStockItem';
 import IsdFufill from './Pages/IsdFufill';
+import CreateNewISD from './Pages/CreateNewISD'
+import ViewPO from './Pages/ViewPO';
+
+import Login from './Pages/Login';
+import ProtectedPage from './Components/ProtectedPage';
+import UsersSmallComp from './Components/UsersSmallComp';
+import ProtectedRoute from './Components/ProtectedRoute';
+
 
 
 function App() {
   return (
     <Router>
-      <div className="app-container">
-
-        <div className="content-area">
-          <Routes> 
-            <Route path="/" element={<HomeScreen />} />
-            <Route path="/inventory" element={<ShowInventory />} />
-            <Route path="/Users" element={<Users />} />
-            <Route path="/ItemsToOrder" element={<ItemsToOrder/>} />
-            <Route path="/ISDs" element={<OrderFufillment/>} />
-            <Route path="/Settings" element={<ITP_Settings/>} />
-            <Route path="/ISDs/:isd_number" element={<IsdFufill/>} />
-            <Route path="/inventory/edit/:stock_id" element={<EditStock/>} />
-            <Route path="/inventory/new" element={<CreateStockItem/>} />
-          </Routes>
-        </div>
-
-        <Sidebar />
-      </div>
+      <AppContent />
     </Router>
   );
 }
+
+function AppContent() {
+  const location = useLocation();
+
+  //route is the login page
+  const isLoginPage = location.pathname === "/";
+  const showHeader = !isLoginPage;
+
+
+  return (
+    <div className="app-container">
+          {!isLoginPage && <Sidebar />}
+      {!isLoginPage && <UsersSmallComp />}
+
+      <div className="main-content">
+            {showHeader && (
+        <h1 className="main-header">
+          Technology Acquisition <span className="turbo-highlight">TURBO</span>
+        </h1>
+      )}
+
+
+
+
+        <div className="content-area">
+          <Routes> 
+            <Route path="/" element={<Login />} />
+          
+
+          <Route path="/protected" element={<ProtectedPage />} />
+            <Route
+              path="/Home"
+              element={
+                <ProtectedRoute>
+                  <HomeScreen />
+                </ProtectedRoute>
+              }
+              />
+                <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute>
+                    <ShowInventory />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/Users"
+                element={
+                  <ProtectedRoute>
+                    <Users />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/ItemsToOrder"
+                element={
+                  <ProtectedRoute>
+                    <ItemsToOrder />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/ISDs"
+                element={
+                  <ProtectedRoute>
+                    <OrderFufillment />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/ISDs/new"
+                element={
+                  <ProtectedRoute>
+                    <CreateNewISD />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/Settings"
+                element={
+                  <ProtectedRoute>
+                    <ITP_Settings />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/inventory/new"
+                element={
+                  <ProtectedRoute>
+                    <CreateStockItem />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/ISDs/:isd_number"
+                element={
+                  <ProtectedRoute>
+                    <IsdFufill />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/inventory/edit/:stock_id"
+                element={
+                  <ProtectedRoute>
+                    <EditStock />
+                  </ProtectedRoute>
+                }
+                />
+                <Route
+                path="/inventory/PO/:po_number"
+                element={
+                  <ProtectedRoute>
+                    <ViewPO />
+                  </ProtectedRoute>
+                }
+                />
+
+
+            </Routes>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default App;

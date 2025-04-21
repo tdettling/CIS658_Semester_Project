@@ -1,18 +1,37 @@
-import React from 'react';
-import { Link } from 'react-router-dom';  
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+
+
+*/
+
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '../auth';
+
 
 import OrdersPreview from '../Components/OrdersPreview';
 import SearchHomepage from '../Components/SearchHomepage';
 
+import ISDSearch from '../Components/SearchComponents/ISDSearch';
+import POSearch from '../Components/SearchComponents/POSearch';
+import RequesterSearch from '../Components/SearchComponents/RequesterSearch';
+import SerialNumberSearch from '../Components/SearchComponents/SerialNumberSearch';
+
 const HomeScreen = () => {
+  const navigate = useNavigate();
+ 
   return (
     <div>
-      <h1>Welcome to Our Store!</h1>
-      <p>Here you can check out various inventory details.</p>
+    <div className="search-bar-group">
+      <ISDSearch />
+      <POSearch />
+      <RequesterSearch />
+    </div>
 
       <OrdersPreview />
-
-      <SearchHomepage />
 
     </div>
   );

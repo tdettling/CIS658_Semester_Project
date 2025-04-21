@@ -1,17 +1,13 @@
 /*
-L Dettling
-CIS 658
-React Parts 1 and 2
+L Dettling 
+CIS 658 Project
 
-PSA: I am slightly familer with React! It has been a while, but we do very similar things in my mobile apps class right now as well. 
+Sources for this file:
+https://www.youtube.com/watch?v=YxQlt3n1ZPA
 */
 
+
 import React, { useState } from "react";
-// index is key
-// Good tutorial for useState function within react:
-// https://www.youtube.com/watch?v=YxQlt3n1ZPA
-// I used it for updating my inventory - the video had seperate handlers for each aspect, 
-// but I just made one function, and passed along the attribute that needed to be changed. Seemed cleaner that way
 
 /*
 productName

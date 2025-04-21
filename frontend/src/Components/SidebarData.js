@@ -1,3 +1,10 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+*/
+
 import React from 'react'
 import HomeIcon from '@mui/icons-material/Home';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -10,7 +17,7 @@ export const SidebarData = [
     {
         title:"Home",
         icon: <HomeIcon />,
-        link: "/",
+        link: "/Home",
     }, 
     {
         title:"Inventory Report",
@@ -23,11 +30,6 @@ export const SidebarData = [
         link: "/ISDs",
     }, 
 
-    {
-        title:"Items to Order",
-        icon: <GradingIcon />,
-        link: "/ItemsToOrder",
-    }, 
     {
         title:"Users",
         icon: <GroupIcon />,

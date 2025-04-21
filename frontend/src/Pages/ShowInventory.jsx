@@ -1,6 +1,9 @@
 /*
-L Dettling
-CIS 658
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+https://react-icons.github.io/react-icons/
 
 Tutorial for APIs - 
 http://medium.com/nerd-for-tech/fetching-api-using-useeffect-hook-in-react-js-7b9b34e427ca
@@ -39,13 +42,14 @@ static addColor(color) {
 
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
+import api from '../api';
+
 import { useNavigate } from "react-router-dom";
-//icons
-// https://react-icons.github.io/react-icons/
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { FaPlusSquare } from "react-icons/fa";
 import DeletePopup from '../Components/DeletePopup';
+import POSearch from '../Components/SearchComponents/POSearch';
 
 export const ShowInventory = (props) => { 
   const [inventory, setInventory] = useState([]);
@@ -65,15 +69,14 @@ export const ShowInventory = (props) => {
 
   useEffect(() => {
     if (fetchInventory) {
-      axios
-        .get('http://127.0.0.1:8000/get_inventory')
+      api
+        .get('/get_inventory')
         .then((res) => {
           setInventory(res.data.data);
           sortInventory(res.data.data);
         })
-        .catch((err) => console.error(err));
-        
-      setFetchInventory(false);
+        .catch((err) => console.error(err))
+        .finally(() => setFetchInventory(false)); 
     }
   }, [fetchInventory]);
 
@@ -101,45 +104,33 @@ export const ShowInventory = (props) => {
     e.preventDefault();
   
     try {
-      const res = await axios.delete(`http://127.0.0.1:8000/inventory/delete/${stock_id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
+      const res = await api.delete(`/inventory/delete/${stock_id}`);
       console.log('Delete successful:', res.data);
-      // triggers refresh, usestate will only update when a compnent is refreshed. 
-      navigate('/inventory'); 
+  
+      //fetch inventory
+      setFetchInventory(true);
     } catch (err) {
       console.error('Error deleting item:', err);
     }
   };
   
+  
   // handle PO search
 
   return (
     <div className="inventory-container">
-      <h1>Inventory Report</h1>
-      <div>
-      <form autocomplete="on" action="/">
-                <div class="autocomplete" >
-                    <input id="PO_Search" type="text" name="po_search" placeholder="PO # "/>
-                </div>
+      <h2>Inventory Report</h2>
+      <POSearch />
 
-                <input type="submit"/>
-
-            </form>
-      </div>
-
-      <button onClick={handleNewButtonClick} className="newStock_button">
-      
-       <FaPlusSquare className='addStockIcon' />
+      <button onClick={handleNewButtonClick} name='new_inventory_item' className="newISD-Stock_button" title="Add Inventory Item">
+        <FaPlusSquare />
       </button>
+
 
 
       <h2>On-Order Items</h2>
 
-      <table className="inventory-table">
+      <table className="partial-inventory-table">
         <thead>
                 <tr>
                   <th> Actions </th>
@@ -155,22 +146,24 @@ export const ShowInventory = (props) => {
                 {onOrderItems.map((item, index) => (
                   <tr key={index}>
         <td>
-          <button
-            onClick={() => handleEditButtonClick(item.stock_id)}
-            className="editStock_button"
-          >
-            <MdEdit className="editStockIcon"/>
-          </button>
+        <button
+          onClick={() => handleEditButtonClick(item.stock_id)}
+          className="editStock_button"
+          data-cy={`edit-stock-${item.po}`} 
+        >
+          <MdEdit className="editStockIcon" />
+        </button>
 
-          <button
-            onClick={() => {
-              setPopup(true);
-              setDeletePopupItem(item);
-            }}
-            className="editStock_button"
-          >
-            <MdDelete className="editStockIcon"/>
-          </button>
+        <button
+          onClick={() => {
+            setPopup(true);
+            setDeletePopupItem(item);
+          }}
+          className="editStock_button"
+          data-cy={`delete-stock-${item.po}`} 
+        >
+          <MdDelete className="editStockIcon" />
+        </button>
         </td>
         <td>{item.po}</td>
         <td>{item.product_name}</td>
@@ -208,7 +201,7 @@ export const ShowInventory = (props) => {
 
 
       <h2>Partially Received Items</h2>
-      <table className="inventory-table">
+      <table className="partial-inventory-table">
         <thead>
           <tr>
             <th> Actions </th>
@@ -224,23 +217,24 @@ export const ShowInventory = (props) => {
           {partialItems.map((item, index) => (
             <tr key={index}>
               <td>
-                <button
-                  onClick={() => handleEditButtonClick(item.stock_id)} 
-                  className="editStock_button"
-                >
-                  <MdEdit className="editStockIcon"/>
-                </button>
+              <button
+          onClick={() => handleEditButtonClick(item.stock_id)}
+          className="editStock_button"
+          data-cy={`edit-stock-${item.po}`} 
+        >
+          <MdEdit className="editStockIcon" />
+        </button>
 
-                <button
-                  onClick={() => {
-                    setPopup(true);
-                    setDeletePopupItem(item);
-                  }}
-                  className="editStock_button"
-                >
-                  <MdDelete className="editStockIcon"/>
-                </button>
-
+        <button
+          onClick={() => {
+            setPopup(true);
+            setDeletePopupItem(item);
+          }}
+          className="editStock_button"
+          data-cy={`delete-stock-${item.po}`} 
+        >
+          <MdDelete className="editStockIcon" />
+        </button>
 
               </td>
               <td>{item.po}</td>
@@ -277,7 +271,7 @@ export const ShowInventory = (props) => {
       )}
 
       <h2>Delivered Items</h2>
-      <table className="inventory-table">
+      <table className="partial-inventory-table">
         <thead>
           <tr>
             <th> Actions </th>
@@ -294,21 +288,23 @@ export const ShowInventory = (props) => {
             <tr key={index}>
               <td>
                 <button
-                  onClick={() => handleEditButtonClick(item.stock_id)} 
-                  className="editStock_button"
-                >
-                  <MdEdit className="editStockIcon"/>
-                </button>
+          onClick={() => handleEditButtonClick(item.stock_id)}
+          className="editStock_button"
+          data-cy={`edit-stock-${item.po}`} 
+        >
+          <MdEdit className="editStockIcon" />
+        </button>
 
-                <button
-                  onClick={() => {
-                    setPopup(true);
-                    setDeletePopupItem(item);
-                  }}
-                  className="editStock_button"
-                >
-                  <MdDelete className="editStockIcon"/>
-                </button>
+        <button
+          onClick={() => {
+            setPopup(true);
+            setDeletePopupItem(item);
+          }}
+          className="editStock_button"
+          data-cy={`delete-stock-${item.po}`} 
+        >
+          <MdDelete className="editStockIcon" />
+        </button>
               </td>
               <td>{item.po}</td>
               <td>{item.product_name}</td>

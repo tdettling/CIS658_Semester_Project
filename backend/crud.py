@@ -1,6 +1,22 @@
-# crud.py
+'''
+L Dettling
+CIS 658
+
+Sources: 
+https://www.w3schools.com/sql/sql_syntax.asp
+https://www.w3schools.com/sql/sql_intro.asp
+https://www.reddit.com/r/learnprogramming/comments/9kqlvi/a_quick_cheatsheet_reference_for_sql_queries/
+https://www.atlassian.com/data/notebook/how-to-execute-raw-sql-in-sqlalchemy
+https://www.geeksforgeeks.org/how-to-execute-raw-sql-in-sqlalchemy/
+https://docs.python.org/3/library/datetime.html
+https://docs.python.org/3.6/library/typing.html
+
+'''
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
+from sqlalchemy import text
+from fastapi import HTTPException
+from datetime import datetime
 from typing import List
 # parsing
 import ast
@@ -26,11 +42,11 @@ def create_inventory_item(db: Session, new_item: dict):
         INSERT INTO ADMIN.INVENTORY_DATA (
             stock_id, product_name, sku, po, price,
             quantity_ordered, quantity_arrived, quantity_available,
-            vendor, status, serial_numbers, category
+            vendor, status, category
         ) VALUES (
             :stock_id, :product_name, :sku, :po, :price,
             :quantity_ordered, :quantity_arrived, :quantity_available,
-            :vendor, :status, :serial_numbers, :category
+            :vendor, :status, :category
         )
     """)
 
@@ -45,12 +61,60 @@ def create_inventory_item(db: Session, new_item: dict):
         "quantity_available": new_item["quantity_available"],
         "vendor": new_item["vendor"],
         "status": new_item["status"],
-        "serial_numbers": new_item["serial_numbers"],
         "category": new_item["category"]
     })
 
     db.commit()
     return {"message": "Item added successfully", "stock_id": new_stock_id}
+
+
+
+
+def create_ISD(db: Session, new_item: dict):
+    # Check that there are actually items
+    if not new_item.get("items"):
+        raise HTTPException(status_code=400, detail="No items on order. Action not completed.")
+
+    # Get the current highest ISD number
+    result = db.execute(text("SELECT MAX(isd_number) FROM ADMIN.ISD_ORDERS")).fetchone()
+    highest_ISD_number = result[0] or 0
+    new_ISD_number = highest_ISD_number + 1
+
+    insert_query = text("""
+        INSERT INTO ADMIN.ISD_ORDERS (
+            items, isd_number, requestor_name, requestor_email, requestor_address, cc,
+            ticket_number, status
+        ) VALUES (
+           :items, :isd_number, :requestor_name, :requestor_email, :requestor_address, :cc,
+            :ticket_number, :status
+        )
+    """)
+
+    db.execute(insert_query, {
+        "isd_number": new_ISD_number,
+        "requestor_name": new_item["requestor_name"],
+        "requestor_email": new_item["requestor_email"],
+        "requestor_address": new_item["requestor_address"],
+        "cc": new_item["cc"],
+        "ticket_number": new_item["ticket_number"],
+        "status": new_item["status"],
+        "items": new_item["items"]
+    })
+
+    db.commit()
+    return {"message": "ISD added successfully", "isd_number": new_ISD_number}
+
+
+
+
+"""    
+    column_check_query = text("SELECT column_name FROM all_tab_columns WHERE table_name = 'ISD_ORDERS' AND column_name = 'TICKET_NUMBER'")
+    column_check_result = db.execute(column_check_query).fetchone()
+    if not column_check_result:
+        raise ValueError("Column 'TICKET_NUMBER' does not exist in table 'ISD_ORDERS'")"""
+
+
+
 
 def create_fulfillment_lines(db:Session, fulfillment_data: dict):
     query = text("""
@@ -87,6 +151,8 @@ READ
 def get_test_table(db: Session):
     result = db.execute(text("SELECT * FROM ADMIN.INVENTORY_DATA")).fetchall()
     return {"data": [dict(row._mapping) for row in result]}
+
+
 
 def get_all_ISDs(db: Session):
     result = db.execute(text("SELECT * FROM ADMIN.ISD_ORDERS")).fetchall()
@@ -131,6 +197,23 @@ def get_fufillment_by_ISD(db: Session, isd_number: int):
     """)
     result = db.execute(query, {"isd_number": isd_number}).fetchall()
 
+    # date looks weird, gotta parse before sening w/datetime
+    formatted_rows = []
+    for row in result:
+        row_dict = dict(row._mapping)
+
+        date_obj = row_dict.get("fulfillment_date")
+        if isinstance(date_obj, datetime):
+            row_dict["fulfillment_date"] = date_obj.strftime("%Y-%m-%d")
+        
+        formatted_rows.append(row_dict)
+
+    return {"data": formatted_rows}
+
+
+
+def get_fufillments(db: Session):
+    result = db.execute(text("SELECT * FROM ADMIN.ISD_FULFILLMENTS")).fetchall()
     return {"data": [dict(row._mapping) for row in result]}
 
 '''
@@ -152,7 +235,6 @@ def update_inventory_item(db: Session, stock_id: int, updated_item: dict):
             quantity_available = :quantity_available,
             vendor = :vendor,
             status = :status,
-            serial_numbers = :serial_numbers,
             category = :category
         WHERE stock_id = :stock_id
     """)
@@ -168,7 +250,6 @@ def update_inventory_item(db: Session, stock_id: int, updated_item: dict):
         "quantity_available": updated_item["quantity_available"],
         "vendor": updated_item["vendor"],
         "status": updated_item["status"],
-        "serial_numbers": updated_item["serial_numbers"],
         "category": updated_item["category"]
     })
 
@@ -205,6 +286,7 @@ def update_stock_quantity(db: Session, stock_id: int, quantity_difference: int, 
 
     # grab serial numbers from database, and remove the ones we are removing
     # Keep the serial_numbers as None if it's NULL in the database
+    # REMOVING S/N LOGIC
     '''
     parsed_database_serial_list = result.serial_numbers if result.serial_numbers is not None else None
 
@@ -247,7 +329,7 @@ def update_stock_quantity(db: Session, stock_id: int, quantity_difference: int, 
 
 
 def update_fulfillment_table_from_ISD(db: Session, isd_number: int, fulfillment_data: dict = Body(...)):
-    # Loop through each item in fulfillment_data to grab each new line added to an order
+    # grab each new line added to an order
     for item in fulfillment_data:
         stock_id = item.get("stock_id")
         quantity = item.get("fulfilled_quantity")
@@ -268,20 +350,38 @@ def update_fulfillment_table_from_ISD(db: Session, isd_number: int, fulfillment_
 
 
 
+def update_ISD_Status(db: Session, isd_number: int, newStatus):
+    try:
+    
+        sql = text("""
+        UPDATE ADMIN.ISD_ORDERS
+            SET status = :status
+            WHERE isd_number = :isd_number
+            """)
+
+        db.execute(sql, {"status": newStatus, "isd_number": isd_number})
+        db.commit()
+        return {"message": "ISD order status updated successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 def update_fulfillment_table_from_ISD_tester(db: Session, isd_number: int, sku: str, po: str, quantity: int, unit_price: float, date: str, memo: str, stock_id: int):
-    # Convert the date string to the correct format
+    # Convert the date string to date object
     try:
         formatted_date = datetime.strptime(date, '%Y-%m-%d').date()
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format. Expected YYYY-MM-DD.")
-    
 
+
+    # adjust stock after deleting old fulfillment data
     stock_pulling_result = update_stock_quantity(db, stock_id, quantity, [])
     print(stock_pulling_result)
-    
-    query = text("""
+
+    # Insert the new fulfillment data
+    insert_query = text("""
         INSERT INTO ADMIN.ISD_FULFILLMENTS (
             isd_number,
             fulfilled_sku,
@@ -300,8 +400,8 @@ def update_fulfillment_table_from_ISD_tester(db: Session, isd_number: int, sku: 
             :memo
         )
     """)
-    
-    db.execute(query, {
+
+    db.execute(insert_query, {
         'isd_number': isd_number,
         'sku': sku,
         'po': po,
@@ -310,6 +410,7 @@ def update_fulfillment_table_from_ISD_tester(db: Session, isd_number: int, sku: 
         'date': formatted_date,
         'memo': memo
     })
+
     db.commit()
 
 
@@ -361,6 +462,25 @@ def delete_fulfillment_line_items(db: Session, isd_number: int):
     # If no rows found, just return a message indicating no items to delete
     return {"detail": "No items to delete"}
 
+
+
+def delete_ISD_Fulfillment_data(db: Session, isd_number: int):
+        # Delete all previous fulfillment records for this ISD number
+    delete_query = text("DELETE FROM ADMIN.ISD_FULFILLMENTS WHERE isd_number = :isd_number")
+    db.execute(delete_query, {'isd_number': isd_number})
+
+
+
+def delete_ISD(db: Session, isd_number: int):
+    # if we delete an ISD, we need to delete all of the fulfillment data with it
+    delete_ISD_Fulfillment_data(db, isd_number)
+
+    delete_query = text("DELETE FROM ADMIN.ISD_ORDERS WHERE isd_number = :isd_number")
+    db.execute(delete_query, {'isd_number': isd_number})
+
+    db.commit()
+
+    return {"detail": "ISD deleted"}
 
 
 '''

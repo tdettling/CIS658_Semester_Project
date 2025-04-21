@@ -1,3 +1,10 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+*/
+
 import React from 'react'
 
 function SearchHomepage() {

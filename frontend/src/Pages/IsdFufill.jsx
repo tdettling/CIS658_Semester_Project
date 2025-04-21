@@ -1,76 +1,90 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+
+
+*/
+
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';  
 import { FaPlusSquare } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import NewLineItemISD from '../Components/NewLineItemISD';
+import { Link, useNavigate } from 'react-router-dom';  
+import Select from 'react-select';
 
-
-//   https://www.w3schools.com/howto/howto_css_dropdown.asp
+import '../Forms.css'
+import api from '../api';
 
 
 function IsdFufill() {
+    const navigate = useNavigate();
+
     const { isd_number } = useParams(); 
 
-    const [ISD_Data, setISDdata] = useState([]);
-    const [totalPrice, updateTotalPrice] = useState([]);
+    const [ISD_Data, setISDdata] = useState({});
+    const [totalPrice, updateTotalPrice] = useState(0);
     const [fulfillmentData, updateFulfillmentData] = useState([]);
     const [lineItems, setLineItems] = useState([]);  
     const [inventory, setInventory] = useState([]);
-
     const [ISD_Data_Items, setISDlines] = useState([]);
 
+    const [hasFetchedFulfillment, setHasFetchedFulfillment] = useState(false);
 
-    //grab current fufillment lines matching isd number
-    //it's fine if it's empty
+    const newStatus = "New";
+    const onOrderStatus = "On-Order";
+    const readyInvoice = "Ready-to-Invoice";
+    const closedStatus = "Closed";
+
+    const [selectedStatus, setSelectedStatus] = useState("");
+
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/ISDs/${isd_number}`)
+      grabTotalPricing(lineItems);
+    }, [lineItems]);
+    
+
+    useEffect(() => {
+        api.get(`/ISDs/${isd_number}`)
             .then((res) => {
                 setISDdata(res.data);
-                console.log('Response Data:', res.data); 
+                setSelectedStatus(res.data.status);
+                console.log('Response Data:', res.data);
                 parse_ISD_item_list(res.data);
             })
             .catch((err) => console.error(err));
     }, [isd_number]);
 
-    //grab current fulfillment lines matching ISD number
+
+
     useEffect(() => {
-        axios
-          .get(`http://127.0.0.1:8000/ISDs/fufillment/${isd_number}`)
+      if (!hasFetchedFulfillment) {
+        api.get(`/ISDs/fufillment/${isd_number}`)
           .then((res) => {
-            updateFulfillmentData(res.data);
-            setLineItems(res.data.data);
-            console.log('Fulfillment Data:', res.data);
-            grabTotalPricing(res.data); 
-            
+            updateFulfillmentData(res.data.data || []);
+            setLineItems(res.data.data || []);
+            grabTotalPricing(res.data.data || []);
+            setHasFetchedFulfillment(true);
           })
           .catch((err) => console.error(err));
-    }, [isd_number]);
-
-        // grab stock for autofill
-         useEffect(() => {
-             axios
-               .get('http://127.0.0.1:8000/get_inventory')
-               .then((res) => {
-                 setInventory(res.data.data);
-               })
-               .catch((err) => console.error(err));
-               
-         }, []);
+      }
+    }, [isd_number, hasFetchedFulfillment]);
+  
 
 
+    useEffect(() => {
+        api.get('/get_inventory')
+            .then((res) => {
+                setInventory(res.data.data);
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
-
-    function grabTotalPricing() {
+    function grabTotalPricing(data) {
         let total = 0;
-        // if there aren't any rows in fufillment table, then nothing has been added yet, 
-        // and the price will be 0
-        if (!fulfillmentData) {
-            updateTotalPrice(total);
-            return;
-        }
-        // for each row, find the row total and add it to running order total. 
-        fulfillmentData.forEach(item => {
+        data.forEach(item => {
             let lineItemPrice = item.fulfilled_price * item.fulfilled_quantity;
             total += lineItemPrice;
         });
@@ -81,22 +95,27 @@ function IsdFufill() {
         setLineItems([...lineItems, {}]);  
     };
 
-    // Update a specific line item's data
-    const updateLineItemData = (index, data) => {
-        const updatedLineItems = [...lineItems];
-        updatedLineItems[index] = data;
-        setLineItems(updatedLineItems);
+    const removeLineItem = (indexToRemove) => {
+      setLineItems(prevItems => prevItems.filter((_, index) => index !== indexToRemove));
     };
+    
+    const updateLineItemData = (index, data) => {
+      const updatedLineItems = [...lineItems];
+      updatedLineItems[index] = data;
+      setLineItems(updatedLineItems); 
+    };
+    
+    
 
-    // everytime there's a new line item, add it onto the prevous data
     const handleSubmit = () => {
-        const allFormData = lineItems.map((_, index) => {
+        const allFormData = lineItems.map((item, index) => {
             const form = document.getElementById(`line-item-form-${index}`);
             const formData = new FormData(form);
-        
-            // Find the inventory item for the current line item
-            const inventoryItem = inventory.find(item => item.sku === formData.get("fulfilled_sku") && item.po === formData.get("fulfilled_po"));
-        
+            const inventoryItem = inventory.find(item => 
+                item.sku === formData.get("fulfilled_sku") && 
+                item.po === formData.get("fulfilled_po")
+            );
+
             return {
                 isd_number: isd_number,
                 fulfilled_sku: formData.get("fulfilled_sku"),
@@ -108,26 +127,23 @@ function IsdFufill() {
                 stock_id: inventoryItem ? inventoryItem.stock_id : null, 
             };
         });
-    
-        // Send the data to the backend as JSON
+
         const payload = { item_rows: allFormData };
-        axios.put(`http://127.0.0.1:8000/ISDs/fulfillment/submit/test/${isd_number}`, payload, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
+
+        api.put(`/ISDs/fulfillment/submit/test/${isd_number}`, payload)
+          .then(response => {
             console.log('Successfully updated inventory:', response);
-        })
-        .catch(error => {
+            navigate("/ISDs");
+          })
+          .catch(error => {
             console.error('Error updating inventory:', error);
-        });
+          });
+
+          
     };
-    
 
     function parse_ISD_item_list(data){
         let itemsToDisplay = [];
-
         if (data.items) {
             if (Array.isArray(data.items)) {
                 itemsToDisplay = data.items;
@@ -140,68 +156,130 @@ function IsdFufill() {
             }
         }
         setISDlines(itemsToDisplay);
-
     }
 
+    const handleStatusChange = (status) => {
+        setSelectedStatus(status);
+    };
 
-    return (
+    const handleStatusSave = () => {
+        api.put(`/ISDs/${selectedStatus}/${isd_number}`, {})
+          .then(response => {
+            console.log('Successfully updated status:', response);
+          })
+          .catch(error => {
+            console.error('Error updating status:', error);
+          });
+      };
+
+    const handleBackButtonClick = () => {
+        navigate("/ISDs");
+      };
+
+
+
+      function grabTotalPricing(items) {
+        if (!Array.isArray(items)) {
+          console.warn("Expected an array for pricing but got:", items);
+          return;
+        }
+      
+        let total = 0;
+        items.forEach(item => {
+          const quantity = parseFloat(item.fulfilled_quantity);
+          const price = parseFloat(item.fulfilled_price);
+          if (!isNaN(quantity) && !isNaN(price)) {
+            total += quantity * price;
+          }
+        });
+      
+        updateTotalPrice(total);
+      }
+      
+      
+      
+
+    
+
+      return (
         <div>
-            <div> 
-                <button> ISD-{ISD_Data.isd_number} </button>
-                <h4> Total ISD Price: ${totalPrice} </h4>
-            </div>
-    
-            <div>
-                <p> Status Bar here</p>
-                <div className="dropdown">
-                    <button className="dropbtn">Status</button>
-                    <div className="dropdown-content">
-                        <a href="#">Link 1</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
-                    </div>
-                    <button>Save</button>
-                    <div> 
-                        <p> Ticket Number: num</p>
-                    </div>
-                </div>
-            </div>
-    
-            <div>
-                <h2> Requestor: {ISD_Data.requestor_name}, {ISD_Data.requestor_email}</h2>
-                <h3> {ISD_Data.requestor_address} </h3>
-                <h3> Cost Center Information: {ISD_Data.cc}</h3>
-            </div>
-    
-            <div>
-                <h2>Items Requested:</h2>
-                {ISD_Data_Items.map((entry, index) => (
-                    <p key={index}>
-                        {entry.item}, Quantity: {entry.quantity}
-                    </p>
-                ))}
-            </div>
 
+          <div className="fulfill-header">
+            <button onClick={handleBackButtonClick} className="back_button">Back to ISDs</button>
+            <span className="total-price">Total ISD Price: ${totalPrice.toFixed(2)}</span>
+          </div>
+      
+      
+          <h2>ISD-{ISD_Data.isd_number}</h2>
+      
 
-    
-            <div>
-                <button onClick={addNewLineItem}>
-                    <FaPlusSquare />
+          <div className="fulfill-top-row">
+            <div className="info-box">
+              <h2>Requestor:</h2>
+              <p><strong>{ISD_Data.requestor_name}</strong></p>
+              <p>{ISD_Data.requestor_email}</p>
+              <p>{ISD_Data.requestor_address}</p>
+              <p><strong>Cost Center:</strong> {ISD_Data.cc}</p>
+            </div>
+      
+            <div className="info-box items-requested">
+              <h2>Items Requested:</h2>
+              {ISD_Data_Items.map((entry, index) => (
+                <p key={index}>{entry.item}, Quantity: {entry.quantity}</p>
+              ))}
+            </div>
+          </div>
+      
+
+          <div className="status-container">
+            <p>Status:</p>
+            <div className="dropdown">
+              <button className="dropbtn">{selectedStatus}</button>
+              <div className="dropdown-content">
+                <a href="#" onClick={() => handleStatusChange(newStatus)}>{newStatus}</a>
+                <a href="#" onClick={() => handleStatusChange(onOrderStatus)}>{onOrderStatus}</a>
+                <a href="#" onClick={() => handleStatusChange(readyInvoice)}>{readyInvoice}</a>
+                <a href="#" onClick={() => handleStatusChange(closedStatus)}>{closedStatus}</a>
+              </div>
+            </div>
+            <button onClick={handleStatusSave} className="submit-button">Save</button>
+          </div>
+      
+
+          <button onClick={addNewLineItem} className="add-line-button">
+            <FaPlusSquare />
+          </button>
+      
+
+          {lineItems.map((item, index) => (
+            <div key={index} className="line-item-wrapper">
+              <NewLineItemISD 
+                index={index} 
+                inventory={inventory}
+                updateLineItemData={updateLineItemData} 
+                initialData={item} 
+                onPriceChange={grabTotalPricing} 
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => removeLineItem(index)}
+                  className="minus-button"
+                >
+                  <MdDelete size={18} />
+                  Remove Line
                 </button>
-                {lineItems.map((item, index) => (
-                    <NewLineItemISD 
-                        key={index} 
-                        index={index} 
-                        inventory={inventory}
-                        updateLineItemData={updateLineItemData} 
-                        initialData={item} 
-                    />
-                ))}
-                <button onClick={handleSubmit}>Submit All Items</button>
+              </div>
             </div>
+          ))}
+      
+
+          <button onClick={handleSubmit} className="submit-button">
+            Submit All Items
+          </button>
         </div>
-    );
-    
+      );
+      
 }
 
-export default IsdFufill
+export default IsdFufill;

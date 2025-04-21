@@ -1,10 +1,19 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+*/
+
+
 import React from 'react';
 
 const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
-  console.log(formData)
+  // when the user submits, convert serial numbers to a JSON string
+
   return (
     <div className="form-container">
-
+        
       <h2> {title}</h2>
       <h3> Stock ID: {formData.stock_id} </h3>
 
@@ -14,6 +23,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
           <input
             type="text"
             name="product_name"
+            data-cy = "product_name"
             value={formData.product_name}
             onChange={handleChange}
           />
@@ -24,6 +34,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
           <input
             type="text"
             name="sku"
+            data-cy = "sku"
             value={formData.sku}
             onChange={handleChange}
           />
@@ -34,6 +45,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
           <input
             type="text"
             name="po"
+            data-cy = "po"
             value={formData.po}
             onChange={handleChange}
           />
@@ -42,8 +54,9 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
         <div className="form-group">
           <label>Price</label>
           <input
-            type="text"
+            type="number"
             name="price"
+            data-cy = "price"
             value={formData.price}
             onChange={handleChange}
           />
@@ -52,7 +65,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
         <div className="form-group">
           <label>Quantity Ordered</label>
           <input
-            type="text"
+            type="number"
             name="quantity_ordered"
             value={formData.quantity_ordered}
             onChange={handleChange}
@@ -62,7 +75,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
         <div className="form-group">
           <label>Quantity Arrived</label>
           <input
-            type="text"
+            type="number"
             name="quantity_arrived"
             value={formData.quantity_arrived}
             onChange={handleChange}
@@ -72,7 +85,7 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
         <div className="form-group">
           <label>Quantity Available</label>
           <input
-            type="text"
+            type="number"
             name="quantity_available"
             value={formData.quantity_available}
             onChange={handleChange}
@@ -99,15 +112,6 @@ const EditItemForm = ({ formData, handleChange, handleSubmit, title }) => {
           />
         </div>
 
-        <div className="form-group">
-          <label>Serial Numbers</label>
-          <input
-            type="text"
-            name="serial_numbers"
-            value={formData.serial_numbers}
-            onChange={handleChange}
-          />
-        </div>
 
         <div className="form-group">
           <label>Category</label>

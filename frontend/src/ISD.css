@@ -1,0 +1,130 @@
+/* 
+L Dettling
+CIS 658
+
+Sources (there are a lot, I am sorry)
+NavBar css - https://www.youtube.com/watch?v=5R9jFHlG6ik
+
+tables - 
+https://www.w3schools.com/css/css_table.asp
+https://piccalil.li/blog/styling-tables-the-modern-css-way/
+https://www.youtube.com/watch?v=biI9OFH6Nmg
+https://www.digitalocean.com/community/tutorials/how-to-style-a-table-with-css
+
+keyframes - 
+https://www.w3schools.com/cssref/atrule_keyframes.php
+https://css-tricks.com/a-handy-little-system-for-animated-entrances-in-css/
+
+Other effects
+https://www.w3schools.com/css/css_form.asp
+https://freefrontend.com/css-forms/
+https://www.w3.org/TR/css-forms-1/
+https://www.w3schools.com/css/css_dropdowns.asp
+https://www.w3schools.com/howto/howto_css_dropdown.asp
+https://freefrontend.com/css-dropdown-menus/
+https://www.reddit.com/r/css/comments/ye0gzc/dropdown_menu_in_css_25_examples/
+
+
+
+*/
+
+
+
+.fulfill-top-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+
+  .info-box {
+    background-color: #f9fafb;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    flex: 1;
+  }
+  
+  
+  .items-requested p {
+    margin: 0.3rem 0;
+  }
+  
+
+  .status-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-left: 0.5rem;
+  }
+  
+
+  .dropbtn {
+    background-color: #0047ab;
+    color: white;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 180px;
+    text-align: left;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    min-width: 180px;
+    z-index: 1;
+    border-radius: 6px;
+  }
+  
+  .dropdown-content a {
+    padding: 10px 14px;
+    display: block;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+
+  .minus-button {
+    background-color: #fff0f0;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    padding: 8px 14px;
+    margin-top: 0.5rem;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+  }
+  
+  .minus-button:hover {
+    background-color: #ffe4e4;
+    border-color: #f87171;
+  }
+  
+  .line-item-wrapper {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  

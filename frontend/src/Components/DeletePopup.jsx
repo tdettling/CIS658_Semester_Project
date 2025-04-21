@@ -1,8 +1,18 @@
+/*
+L Dettling 
+CIS 658 Project
+
+Sources for this file:
+https://www.youtube.com/watch?v=i8fAO_zyFAM
+
+*/
+
+
+
+
 import React from 'react'
 
 import { MdDelete } from "react-icons/md";
-
-// https://www.youtube.com/watch?v=i8fAO_zyFAM
 
 function DeletePopup(props) {
     return props.trigger ? (
@@ -13,6 +23,7 @@ function DeletePopup(props) {
           <div className="popup-buttons">
             <button
               className="confirm-btn"
+              data-cy="confirm_delete"
               onClick={props.onConfirm}
             >
               Yes, I'm sure
@@ -20,6 +31,7 @@ function DeletePopup(props) {
             
             <button
               className="cancel-btn"
+              data-cy="cancel_delete"
               onClick={() => props.setTrigger(false)}
             >
               Cancel

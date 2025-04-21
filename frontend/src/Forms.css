@@ -1,0 +1,284 @@
+/* 
+L Dettling
+CIS 658
+
+Sources (there are a lot, I am sorry)
+NavBar css - https://www.youtube.com/watch?v=5R9jFHlG6ik
+
+tables - 
+https://www.w3schools.com/css/css_table.asp
+https://piccalil.li/blog/styling-tables-the-modern-css-way/
+https://www.youtube.com/watch?v=biI9OFH6Nmg
+https://www.digitalocean.com/community/tutorials/how-to-style-a-table-with-css
+
+keyframes - 
+https://www.w3schools.com/cssref/atrule_keyframes.php
+https://css-tricks.com/a-handy-little-system-for-animated-entrances-in-css/
+
+Other effects
+https://www.w3schools.com/css/css_form.asp
+https://freefrontend.com/css-forms/
+https://www.w3.org/TR/css-forms-1/
+https://www.w3schools.com/css/css_dropdowns.asp
+https://www.w3schools.com/howto/howto_css_dropdown.asp
+https://freefrontend.com/css-dropdown-menus/
+https://www.reddit.com/r/css/comments/ye0gzc/dropdown_menu_in_css_25_examples/
+
+
+
+*/
+
+
+
+.form-container {
+    margin: 2rem 0 2rem 2.5rem;
+  }
+  
+  .add-line-button {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 4px;
+  }
+  .add-line-button-row {
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-line-button-row button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 12px;
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .add-line-button-row button:hover {
+    background-color: #e6f0ff;
+  }
+
+  .submit-button {
+    padding: 12px 24px;
+    background-color: #002f86;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 47, 134, 0.3);
+    transition: background-color 0.2s ease;
+  }
+
+  .submit-button:hover {
+    background-color: #0040a0;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 250px;
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .inventory-form {
+    max-width: 1100px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-field label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1f2937;
+  }
+  
+  .form-group input {
+    padding: 12px 14px;
+    font-size: 1rem;
+    max-width: 90%; 
+  }
+  
+
+.form-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f7f7f7;
+  transition: border-color 0.2s ease;
+}
+  
+
+.form-input:focus {
+    outline: none;
+    border-color: #0077cc;
+    background-color: #fff;
+  }
+  
+  button[type="submit"],
+  .back_button {
+    background-color: #003087;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  button[type="submit"]:hover,
+  .back_button:hover {
+    background-color: #0053ba;
+    transform: translateY(-1px);
+  }
+  
+  button svg {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+
+
+.fulfill-top-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  
+  .info-box {
+    background-color: #f9fafb;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    flex: 1;
+  }
+  
+  
+  .items-requested p {
+    margin: 0.3rem 0;
+  }
+  
+  
+  .status-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-left: 0.5rem;
+  }
+  
+  
+  .dropbtn {
+    background-color: #0047ab;
+    color: white;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 180px;
+    text-align: left;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    min-width: 180px;
+    z-index: 1;
+    border-radius: 6px;
+  }
+  
+  .dropdown-content a {
+    padding: 10px 14px;
+    display: block;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  
+  .minus-button {
+    background-color: #fff0f0;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    padding: 8px 14px;
+    margin-top: 0.5rem;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+  }
+  
+  .minus-button:hover {
+    background-color: #ffe4e4;
+    border-color: #f87171;
+  }
+  
+  .line-item-wrapper {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    position: relative;
+  }
+
+  .line-item-wrapper input {
+    width: 90%; 
+    box-sizing: border-box;
+  }
+  
+  
+  .lineItem-field input {
+  width: 95%;
+  box-sizing: border-box;
+}
+
+  
+  
+  
