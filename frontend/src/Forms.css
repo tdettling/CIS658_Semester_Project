@@ -285,4 +285,23 @@ https://freefrontend.com/css-cards/
 
   
   
+.register-wrapper {
+    margin-top: 1rem;
+  }
+  
+  .register-link-button {
+    background-color: transparent;
+    color: #003087;
+    border: none;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+  }
+  
+  .register-link-button:hover {
+    color: #0054d1;
+  }
+  
   

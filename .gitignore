@@ -5,6 +5,7 @@ venv/
 
 # Ignore Node.js dependencies
 frontend/node_modules/
+frontend/.env
 
 # Ignore environment and cache files
 .env

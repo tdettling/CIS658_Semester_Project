@@ -36,6 +36,8 @@ import Login from './Pages/Login';
 import ProtectedPage from './Components/ProtectedPage';
 import UsersSmallComp from './Components/UsersSmallComp';
 import ProtectedRoute from './Components/ProtectedRoute';
+import Register from './Pages/Register';
+import Weather from './Components/Weather';
 
 
 
@@ -49,30 +51,37 @@ function App() {
 
 function AppContent() {
   const location = useLocation();
-
-  //route is the login page
   const isLoginPage = location.pathname === "/";
-  const showHeader = !isLoginPage;
+  const isRegisterPage = location.pathname === "/Register";
+  const isAuthPage = isLoginPage || isRegisterPage;
 
 
   return (
     <div className="app-container">
-          {!isLoginPage && <Sidebar />}
-      {!isLoginPage && <UsersSmallComp />}
+      {!isAuthPage && <Sidebar />}
 
       <div className="main-content">
-            {showHeader && (
-        <h1 className="main-header">
-          Technology Acquisition <span className="turbo-highlight">TURBO</span>
-        </h1>
-      )}
-
+        {!isAuthPage && (
+          <header className="header">
+            <h1 className="main-title">
+              Technology Acquisition <span className="turbo-highlight">TURBO</span>
+            </h1>
+            <div className="header-widgets">
+              <Weather />
+              <UsersSmallComp />
+            </div>
+          </header>
+        )}
 
 
 
         <div className="content-area">
           <Routes> 
             <Route path="/" element={<Login />} />
+
+           
+
+            <Route path="/Register" element={<Register />} />
           
 
           <Route path="/protected" element={<ProtectedPage />} />

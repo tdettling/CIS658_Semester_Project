@@ -24,6 +24,7 @@ import { FaDoorOpen } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { FaPlusSquare } from "react-icons/fa";
 import { useLocation, useSearchParams } from 'react-router-dom';
+import '../Forms.css'
 
 
 import { LuEyeClosed } from "react-icons/lu";
@@ -143,6 +144,16 @@ function Login() {
               </div>
             )}
           </form>
+
+          <div className="register-wrapper">
+            <button
+              onClick={() => navigate('/Register')}
+              className="register-link-button"
+            >
+              Register here
+            </button>
+          </div>
+
         </div>
       </div>
     );

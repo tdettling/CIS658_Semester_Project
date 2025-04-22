@@ -166,6 +166,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_session_local)):
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_user(db, user)
 
+
 @app.post("/token")
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),

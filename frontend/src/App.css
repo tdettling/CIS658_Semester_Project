@@ -381,18 +381,15 @@ input[type=submit] {
 }
 
 .user-profile-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   display: flex;
   align-items: center;
   background-color: #f0f0f0;
   border-radius: 999px;
   padding: 0.5rem 1rem;
   cursor: pointer;
-  z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
+  margin-left: 1rem;
 }
 
 .user-profile-button:hover {
@@ -682,11 +679,14 @@ input[type=submit] {
 .login-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: flex-start; 
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: center;
   padding-top: 6vh;
-  background: #ffffff; 
+  background: #ffffff;
 }
+
+
 .login-form {
   background-color: #ffffff;
   padding: 2.5rem;
