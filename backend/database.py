@@ -1,5 +1,21 @@
+'''
+L Dettling
+CIS 658
+
+Sources: 
+https://docs.sqlalchemy.org/en/20/core/engines.html
+https://www.geeksforgeeks.org/connecting-to-sql-database-using-sqlalchemy-in-python/
+https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/connecting-python-mtls.html
+https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/connecting-python-mtls.html#GUID-70853600-E169-4C46-909C-39E9DE443850
+https://www.oracle.com/a/ocom/docs/database/adb-ssis-sdt.pdf
+
+https://www.youtube.com/watch?v=MWrD-99xqzs
+
+
+'''
+
+
 import oracledb
-import os
 import app_settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -11,19 +27,22 @@ Base = declarative_base()
 # Load app settings
 settings = app_settings.get_settings()
 
-# Set TNS_ADMIN environment variable to wallet directory
-wallet_path = os.path.join(os.path.dirname(__file__), "wallet")
-os.environ["TNS_ADMIN"] = wallet_path
+#CONFIG_DIR = r"C:\Users\tdett\CIS658\CIS658_Semester_Project\backend\wallet"  
+#WALLET_DIR = r"C:\Users\tdett\CIS658\CIS658_Semester_Project\backend\wallet"  
 
-# Build your Oracle DB URL from env vars
-ORACLE_USER = os.getenv("ORACLE_USER")
-ORACLE_PASSWORD = os.getenv("ORACLE_PASSWORD")
-TNS_NAME = "zjerw393z01twmro_low"  # Or whichever one you prefer from your tnsnames.ora
+CONFIG_DIR = r".\backend\wallet"
+WALLET_DIR = r".\backend\wallet"
 
-DATABASE_URL = f"oracle+oracledb://{ORACLE_USER}:{ORACLE_PASSWORD}@{TNS_NAME}"
+oracle_username = settings.ORACLE_DB_USERNAME
+oracle_password = settings.ORACLE_DB_PASSWORD
+oracle_wallet_password = settings.ORACLE_WALLET_PASSWORD
 
+oracledb.init_oracle_client(config_dir=CONFIG_DIR)
+
+DATABASE_URL = f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low"
 
 engine = create_engine(DATABASE_URL, pool_size=5, max_overflow=10)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
