@@ -35,9 +35,12 @@ oracle_username = settings.ORACLE_DB_USERNAME
 oracle_password = settings.ORACLE_DB_PASSWORD
 oracle_wallet_password = settings.ORACLE_WALLET_PASSWORD
 
-oracledb.init_oracle_client(config_dir=CONFIG_DIR)
+oracledb.init_oracle_client(lib_dir=None)
 
-DATABASE_URL = f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low"
+DATABASE_URL = (
+    f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low?mode=thin"
+)
+
 
 engine = create_engine(DATABASE_URL, pool_size=5, max_overflow=10)
 
