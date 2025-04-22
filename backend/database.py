@@ -14,10 +14,11 @@ oracle_username = settings.ORACLE_DB_USERNAME
 oracle_password = settings.ORACLE_DB_PASSWORD
 
 # Thin mode init (optional, but safe to include)
-oracledb.init_oracle_client(lib_dir=None)
+# oracledb.init_oracle_client(lib_dir=None)
 
 # Ensure you use mode=thin
-DATABASE_URL = f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low?mode=thin"
+DATABASE_URL = f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low"
+
 
 engine = create_engine(DATABASE_URL, pool_size=5, max_overflow=10)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
