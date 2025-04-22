@@ -17,7 +17,11 @@ oracle_password = settings.ORACLE_DB_PASSWORD
 # oracledb.init_oracle_client(lib_dir=None)
 
 # Ensure you use mode=thin
-DATABASE_URL = f"oracle+oracledb://{oracle_username}:{oracle_password}@zjerw393z01twmro_low"
+DATABASE_URL = (
+    f"oracle+oracledb://{oracle_username}:{oracle_password}"
+    "@adb.us-chicago-1.oraclecloud.com/g43adc63d9e3381_zjerw393z01twmro_low.adb.oraclecloud.com"
+)
+
 
 
 engine = create_engine(DATABASE_URL, pool_size=5, max_overflow=10)
