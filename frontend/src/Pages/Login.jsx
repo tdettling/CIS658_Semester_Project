@@ -64,7 +64,7 @@ function Login() {
         formDetails.append('password', password);
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/token', {
+            const response = await fetch('https://itp-backend-9b63ec0fd93f.herokuapp.com//token', {
                 method: 'POST', 
                 headers: {
                     'Content-Type' : 'application/x-www-form-urlencoded',
