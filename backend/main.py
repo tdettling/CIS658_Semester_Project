@@ -12,6 +12,8 @@ good tutoirals for making conneciton and getitng FastAPI working:
 https://www.youtube.com/watch?v=0N6oWoosxxE
 https://www.youtube.com/watch?v=MtrbexY7NkQ
 
+JWT Auth
+https://www.youtube.com/watch?v=YpvcqxYiyNE
 
 POST Requests StackOverflow:
 https://stackoverflow.com/questions/73759718/how-to-post-json-data-from-javascript-frontend-to-fastapi-backend
@@ -80,6 +82,9 @@ AUTHENTICATION
 *******************************************************************************************************
 '''
 
+'''
+Followed tutorial for JWT Auth - https://www.youtube.com/watch?v=YpvcqxYiyNE
+'''
 # Security and Token Config
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated=["auto"])
