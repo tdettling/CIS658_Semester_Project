@@ -1,4 +1,5 @@
 import oracledb
+import os
 import app_settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -16,12 +17,13 @@ oracle_password = settings.ORACLE_DB_PASSWORD
 # Thin mode init (optional, but safe to include)
 # oracledb.init_oracle_client(lib_dir=None)
 
-# Ensure you use mode=thin
-DATABASE_URL = (
-    f"oracle+oracledb://{oracle_username}:{oracle_password}"
-    "@adb.us-chicago-1.oraclecloud.com/g43adc63d9e3381_zjerw393z01twmro_low.adb.oraclecloud.com"
-)
+wallet_path = os.path.join(os.getcwd(), "wallet")
+os.environ["TNS_ADMIN"] = wallet_path
 
+# Oracle connection string - must match the TNS name in `tnsnames.ora`
+DATABASE_URL = (
+    f"oracle+oracledb://{os.getenv('ORACLE_USER')}:{os.getenv('ORACLE_PASSWORD')}@zjerw393z01twmro_low"
+)
 
 
 engine = create_engine(DATABASE_URL, pool_size=5, max_overflow=10)
