@@ -17,9 +17,10 @@ https://react.dev/learn/updating-arrays-in-state
 
 
 import axios from 'axios';
+//https://itp-backend-9b63ec0fd93f.herokuapp.com
 
 const api = axios.create({
-  baseURL: 'https://itp-backend-9b63ec0fd93f.herokuapp.com',
+  baseURL: 'http://127.0.0.1:8000',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -10,7 +10,8 @@ https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/conne
 https://www.oracle.com/a/ocom/docs/database/adb-ssis-sdt.pdf
 
 https://www.youtube.com/watch?v=MWrD-99xqzs
-
+https://www.youtube.com/watch?v=BCLsb-AdrhQ
+https://www.youtube.com/watch?v=YnsN52hB8EY
 
 '''
 
@@ -27,11 +28,8 @@ Base = declarative_base()
 # Load app settings
 settings = app_settings.get_settings()
 
-#CONFIG_DIR = r"C:\Users\tdett\CIS658\CIS658_Semester_Project\backend\wallet"  
-#WALLET_DIR = r"C:\Users\tdett\CIS658\CIS658_Semester_Project\backend\wallet"  
-
-CONFIG_DIR = r".\backend\wallet"
-WALLET_DIR = r".\backend\wallet"
+CONFIG_DIR = r"C:\Users\tdett\OracleDB"  
+WALLET_DIR = r"C:\Users\tdett\OracleDB"  
 
 oracle_username = settings.ORACLE_DB_USERNAME
 oracle_password = settings.ORACLE_DB_PASSWORD

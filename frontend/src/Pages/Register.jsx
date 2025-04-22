@@ -66,7 +66,7 @@ const [confirmVisible, setConfirmVisible] = useState(false);
 
     try {
       // Register the user (JSON)
-      const registerRes = await fetch('https://itp-backend-9b63ec0fd93f.herokuapp.com/register', {
+      const registerRes = await fetch('http://127.0.0.1:8000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const [confirmVisible, setConfirmVisible] = useState(false);
       formDetails.append('username', username);
       formDetails.append('password', password);
 
-      const loginRes = await fetch('https://itp-backend-9b63ec0fd93f.herokuapp.com/token', {
+      const loginRes = await fetch('http://127.0.0.1:8000/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
